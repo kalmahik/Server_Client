@@ -2,6 +2,7 @@ package Server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,10 +41,13 @@ public class Client {
             try {
                 String username = reader.readLine();
                 if (ClientManager.getInstance().hasClient(username)) {
-                    writer.println("Клиент с таким именем существует\nПоробуйте другое имя");
+                    writer.println("Клиент с таким именем существует. Поробуйте другое имя");
                     writer.flush();
                 } else {
                     this.username = username;
+                    writer.println("valid");
+                    writer.flush();
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();

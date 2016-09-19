@@ -17,11 +17,25 @@ public class ClientStartpoint {
     public void start() {
         try {
             socket = new Socket(IP, PORT);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+
+            String validName;
+            boolean valid = true;
 
             System.out.println("Введите имя");
+            while (valid) {
+                username = readerFromConsole();
+                printToServer(username);
+                validName = reader.readLine();
+                if (!validName.equals("valid")){
+                    System.out.println(validName);
+                }
+                if (validName.equals("valid")) {
+                    valid = false;
+                }
+            }
 
-            username = readerFromConsole();
-            printToServer(username);
 
             handler = new ClientHandler(socket);
             handler.start();
@@ -46,12 +60,16 @@ public class ClientStartpoint {
             handler.stopHandler();
             writer.close();
             socket.close();
-        } catch (IOException e) {
+        } catch (
+                IOException e)
+
+        {
             e.printStackTrace();
         }
+
     }
 
-    public Message stringToObj(String message){
+    public Message stringToObj(String message) {
         String[] s = message.split("@", 3);
         messageObj = new Message(username, s[1], s[2]);
         return messageObj;

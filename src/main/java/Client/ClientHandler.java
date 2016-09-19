@@ -27,6 +27,7 @@ public class ClientHandler extends Thread {
     public void run() {
         try {
             while (alive) {
+
                 String messageJson = reader.readLine();
                 if (messageJson == null) {
                     break;
