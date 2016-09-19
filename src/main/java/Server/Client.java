@@ -2,7 +2,6 @@ package Server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,7 +40,7 @@ public class Client {
             try {
                 String username = reader.readLine();
                 if (ClientManager.getInstance().hasClient(username)) {
-                    writer.println("Client with same username exists\nTry another username");
+                    writer.println("Клиент с таким именем существует\nПоробуйте другое имя");
                     writer.flush();
                 } else {
                     this.username = username;
@@ -95,9 +94,7 @@ public class Client {
      */
     public void onMessageReceived(String messageJson) {
         //TODO: message (json) -> message (object)
-        Gson gson = new Gson();
-        Message messageObj = gson.fromJson(messageJson, Message.class);
-        sender.addMessage(messageObj);
+        sender.addMessage(fromJson(messageJson));
     }
 
     /**
@@ -107,14 +104,24 @@ public class Client {
      */
     public void sendMessage(Message messageObj) {
         //TODO: message to json
-        Gson gson = new GsonBuilder()
-                .create();
-        String messageJson = gson.toJson(messageObj);
-        writer.println(messageJson);
+        writer.println(toJson(messageObj));
         writer.flush();
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public String toJson(Message messageObj) {
+        Gson gson = new GsonBuilder()
+                .create();
+        String messageJson = gson.toJson(messageObj);
+        return messageJson;
+    }
+
+    public Message fromJson(String messageJson) {
+        Gson gson = new Gson();
+        Message messageObj = gson.fromJson(messageJson, Message.class);
+        return messageObj;
     }
 }

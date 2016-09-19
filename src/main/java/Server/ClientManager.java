@@ -3,9 +3,6 @@ package Server;
 import java.net.Socket;
 import java.util.ArrayList;
 
-/*
-Одиночка - Singleton
- */
 public class ClientManager {
     private static ClientManager instance = new ClientManager();
     private ArrayList<Client> clients = new ArrayList<>();
@@ -37,8 +34,8 @@ public class ClientManager {
      */
     public void onClientSignedIn(Client client) {
         clients.add(client);
+        System.out.println("Клиент " + client.getUsername() + " подключился");
         client.startMessaging();
-        System.out.println("Client " + client.getUsername() + " connected");
     }
 
     /**
@@ -48,20 +45,25 @@ public class ClientManager {
      */
     public void onClientDisconnected(Client client) {
         if (clients.remove(client)) {
-            System.out.println("Client " + client.getUsername() + " out");
+            System.out.println("Клиент " + client.getUsername() + " отключился");
         }
     }
 
     /**
      * Рассылка сообщений клиентам
      *
-     * @param messageObj  отправляемое сообщение //TODO: type -> Message
+     * @param messageObj отправляемое сообщение //TODO: type -> Message
      */
     public void sendMessage(Message messageObj) {
         if (messageObj != null) {
             for (Client client : clients) {
                 if (client.getUsername().equals(messageObj.getReceiver()))
-                client.sendMessage(messageObj);
+                    client.sendMessage(messageObj);
+                if (messageObj.getReceiver().equals("all")){
+                    if (!(client.getUsername().equals(messageObj.getSender()))){
+                        client.sendMessage(messageObj);
+                    }
+                }
             }
         }
     }

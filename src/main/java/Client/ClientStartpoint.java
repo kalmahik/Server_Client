@@ -1,51 +1,45 @@
 package Client;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.*;
 import java.net.Socket;
 
 public class ClientStartpoint {
-    private static final String IP = "127.0.0.1"; //localhost
+    private static final String IP = "127.0.0.1";
     private static final int PORT = 8080;
-    Message messageObj;
+    private Message messageObj;
+    private ClientHandler handler;
+    private BufferedReader consoleReader;
+    private PrintWriter writer;
+    private Socket socket;
+    private String username;
+    private String messageJson;
 
     public void start() {
         try {
-            Socket socket = new Socket(IP, PORT);
-            PrintWriter writer = new PrintWriter(socket.getOutputStream());
-            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
-            //Сначала отправляем логин!!!
+            socket = new Socket(IP, PORT);
 
             System.out.println("Введите имя");
-            String username = consoleReader.readLine();
 
-            writer.println(username);
-            writer.flush();
+            username = readerFromConsole();
+            printToServer(username);
 
-            MessageHandler handler = new MessageHandler(socket);
+            handler = new ClientHandler(socket);
             handler.start();
 
             while (true) {
-                String message = consoleReader.readLine();
+                String message = readerFromConsole();
+
                 if (message == null) {
                     break;
-                }
-                if (message.equals("exit")) {
+                } else if (message.equals("exit")) {
                     break;
+                } else {
+
+                    messageObj = stringToObj(message);
+                    messageJson = handler.toJson(messageObj);
+                    printToServer(messageJson);
+
                 }
-                String[] s = message.split("@", 3);
-
-                messageObj = new Message(username, s[1], s[2]);
-
-                Gson gson = new GsonBuilder()
-                        .create();
-
-                String messageJson = gson.toJson(messageObj);
-
-                writer.println(messageJson);
-                writer.flush();
 
             }
             handler.stopHandler();
@@ -54,5 +48,33 @@ public class ClientStartpoint {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Message stringToObj(String message){
+        String[] s = message.split("@", 3);
+        messageObj = new Message(username, s[1], s[2]);
+        return messageObj;
+    }
+
+    public String readerFromConsole() {
+        consoleReader = new BufferedReader(new InputStreamReader(System.in));
+        String str = null;
+        try {
+            str = consoleReader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+    public void printToServer(String str) {
+        try {
+            writer = new PrintWriter(socket.getOutputStream());
+            writer.println(str);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

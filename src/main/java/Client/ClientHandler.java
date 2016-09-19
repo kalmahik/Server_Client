@@ -1,17 +1,21 @@
 package Client;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStreamReader;;
 import java.net.Socket;
 
-public class MessageHandler extends Thread {
+public class ClientHandler extends Thread {
+
     private BufferedReader reader;
     private boolean alive = true;
+    private Gson gson;
 
-    public MessageHandler(Socket socket) {
+
+    public ClientHandler(Socket socket) {
         try {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
@@ -23,16 +27,14 @@ public class MessageHandler extends Thread {
     public void run() {
         try {
             while (alive) {
-
                 String messageJson = reader.readLine();
                 if (messageJson == null) {
                     break;
                 }
-                Gson gson = new Gson();
-                Message messageObj = gson.fromJson(messageJson, Message.class);
-                System.out.println("Receiver: " + messageObj.getReceiver());
-                System.out.println("Message:" +  messageObj.getMessage());
+                Message messageObj = fromJson(messageJson);
 
+                System.out.println("Sender: " + messageObj.getSender());
+                System.out.println("Message: " + messageObj.getMessage());
 
             }
             stopHandler();
@@ -51,5 +53,16 @@ public class MessageHandler extends Thread {
             }
             alive = false;
         }
+    }
+
+    public String toJson(Message messageObj) {
+        gson = new GsonBuilder()
+                .create();
+        return gson.toJson(messageObj);
+    }
+
+    public Message fromJson(String messageJson) {
+        gson = new Gson();
+        return gson.fromJson(messageJson, Message.class);
     }
 }
