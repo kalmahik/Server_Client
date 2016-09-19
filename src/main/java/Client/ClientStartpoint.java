@@ -37,7 +37,6 @@ public class ClientStartpoint {
 
             }
 
-
             handler = new ClientHandler(socket);
             handler.start();
 
@@ -50,13 +49,11 @@ public class ClientStartpoint {
                     printToServer(message);
                     break;
                 } else {
-
                     messageObj = stringToObj(message);
                     messageJson = handler.toJson(messageObj);
                     printToServer(messageJson);
 
                 }
-
             }
             handler.stopHandler();
             writer.close();
@@ -95,6 +92,5 @@ public class ClientStartpoint {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
