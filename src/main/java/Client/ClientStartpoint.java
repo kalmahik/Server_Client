@@ -21,19 +21,20 @@ public class ClientStartpoint {
 
 
             String validName;
-            boolean valid = true;
 
             System.out.println("Введите имя");
-            while (valid) {
+            while (true) {
                 username = readerFromConsole();
                 printToServer(username);
                 validName = reader.readLine();
+
+                if (validName.equals("valid")) {
+                    break;
+                }
                 if (!validName.equals("valid")){
                     System.out.println(validName);
                 }
-                if (validName.equals("valid")) {
-                    valid = false;
-                }
+
             }
 
 
