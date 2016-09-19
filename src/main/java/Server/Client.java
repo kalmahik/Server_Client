@@ -61,7 +61,7 @@ public class Client {
         try {
             while (true) {
                 String message = reader.readLine();
-                if (message == null) {
+                if (message == null || message.equals("exit")) {
                     stopClient();
                     break;
                 }
@@ -115,13 +115,11 @@ public class Client {
     public String toJson(Message messageObj) {
         Gson gson = new GsonBuilder()
                 .create();
-        String messageJson = gson.toJson(messageObj);
-        return messageJson;
+        return gson.toJson(messageObj);
     }
 
     public Message fromJson(String messageJson) {
         Gson gson = new Gson();
-        Message messageObj = gson.fromJson(messageJson, Message.class);
-        return messageObj;
+        return gson.fromJson(messageJson, Message.class);
     }
 }

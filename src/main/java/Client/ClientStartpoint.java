@@ -32,6 +32,7 @@ public class ClientStartpoint {
                 if (message == null) {
                     break;
                 } else if (message.equals("exit")) {
+                    printToServer(message);
                     break;
                 } else {
 
